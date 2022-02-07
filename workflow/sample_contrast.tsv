@@ -1,0 +1,9 @@
+sample	phenotype	lib_type
+Ad5input1	wt	input
+Ad5input2	wt	input
+E4input1	e4	input
+E4input2	e4	input
+J2Ad5-1	wt	J2-RIP
+J2Ad5-2	wt	J2-RIP
+J2E4-1	e4	J2-RIP
+J2E4-2	e4	J2-RIP

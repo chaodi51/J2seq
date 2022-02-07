@@ -1,0 +1,99 @@
+# The main entry point of the workflow
+# snakemake  --rerun-incomplete --latency-wait 20 -j 20 -p -c "sbatch --job-name={params.jobName} --mem={params.mem} -c {threads} --time=360 -e sbatch/{params.jobName}.e -o sbatch/{params.jobName}.o"
+
+# shell.prefix("source ~/.bash_profile; ")
+import os
+import pandas as pd
+
+##### load config #####
+configfile: "../config/config_J2Seq.yaml"
+
+# data dir
+STAR_index = config['index']['STAR_index']
+STAR_align = config['data_dir']['STAR_align']
+STAR_align_multi = config['data_dir']['STAR_align']
+gtf_file = config['genome']['annotation']
+TE_gtf = config['genome']['TE_anno']
+genome_seq = config['genome']['sequence']
+fastq_screen_conf = config['genome']['fastq_screen_conf']
+fastq_screen_output = config['data_dir']['fastq_screen']
+
+# store the raw data under the "/data" folder, and the results in ../results/
+# if not os.path.exists(raw_fq):
+#     os.makedirs(raw_fq)
+#     os.symlink(raw_fq, "raw_fq")    
+if not os.path.exists(fastq_screen_output):
+    os.makedirs(fastq_screen_output)
+if not os.path.exists(STAR_align):
+    os.makedirs(STAR_align)
+    os.symlink(STAR_align, "STAR_align")
+if not os.path.exists(STAR_align_multi):
+    os.makedirs(STAR_align_multi)
+    os.symlink(STAR_align_multi, "STAR_align_multi")       
+if not os.path.exists('qsub'):
+    os.makedirs('qsub')
+if not os.path.exists("STAR_index"):
+    os.symlink(STAR_index, "STAR_index")  
+
+##### sample sheets #####
+sample_table = pd.read_table(config['samples']).set_index('sample',drop=False)
+sample_table.index.astype('str')   # enforce str in index
+SAMPLES = sample_table['sample'].tolist()
+
+
+# single-end sample does not have 'fq2' column in the table 'sample_table.tsv'
+def is_single_end(sample):
+    return pd.isnull(sample_table.loc[sample, "fq2"])
+
+def get_fastq(wildcards):
+    if not is_single_end(**wildcards):
+        return expand("raw_fq/{sample}_{group}.fastq.gz", group=[1, 2], **wildcards)
+    return "raw_fq/{sample}.fastq.gz".format(**wildcards)
+
+##### target rules #####
+rule all:
+    input:
+        expand("raw_fq/{sample}.fastq.gz", sample=SAMPLES),
+        # expand("../results/fastq_screen_output/{sample}.tagged_filter.fastq.gz", sample=SAMPLES),
+        # '../results/multiqc/fastqscreen/multiqc_report.html',
+        # expand("../results/fastqc/{sample}_fastqc.html", sample=SAMPLES),
+        # '../results/multiqc/fastqc/multiqc_report.html',
+        # expand(["STAR_align/{sample}.bam", "STAR_align/{sample}.bam.bai"], sample=SAMPLES),
+        # expand("STAR_align/{sample}.Log.final.out", sample=SAMPLES),
+        expand(["STAR_align_multi/{sample}.bam", "STAR_align_multi/{sample}.bam.bai"], sample=SAMPLES),
+        expand("STAR_align_multi/{sample}.Log.final.out", sample=SAMPLES),
+        '../results/multiqc/star/multiqc_report.html',
+        expand("merged_bam/{sample}_merged.bam", sample=SAMPLES),
+        expand("merged_bam/{sample}_merged.bam.bai", sample=SAMPLES),
+        expand("merged_bam/{sample}_merged_dedup.bam", sample=SAMPLES),
+        expand("merged_bam/{sample}_merged_dedup_sorted.bam", sample=SAMPLES),
+        expand("merged_bam/ad5.{sample}_merged_dedup_sorted.bam", sample=SAMPLES),
+        expand("merged_bam/ad5.{sample}_merged_dedup_sorted.bam.bai", sample=SAMPLES),
+        expand("merged_bam/{sample}_merged_dedup_sorted.junc.bed", sample=SAMPLES),
+        expand("merged_bam/{sample}_merged_dedup_sorted.junc.anno", sample=SAMPLES),
+        expand("../results/TEcount/TEcount.{sample}.cntTable", sample=SAMPLES),
+        "../results/TEcount/J2seq.TEcount.tsv",        
+        "../results/J2seq_featureCount.tsv",
+        "../results/J2seq_featureCount_ad5_fwd.tsv",
+        "../results/J2seq_featureCount_ad5_rev.tsv",
+        "../results/Junctions/J2seq.ad5.junc.tsv",
+        "../results/J2seq_featureCount_ad5_segments.tsv",   
+        expand("bw_cpm/{sample}.fwd.bw", sample=SAMPLES),
+        expand("bw_cpm/{sample}.rev.minus.bw", sample=SAMPLES)
+
+##### setup report #####
+report: "report/workflow.rst"
+
+##### load rules #####
+# include: "rules/fastq_screen.smk"
+# include: "rules/fastqc.smk"
+# include: "rules/star_map.smk"
+# include: "rules/star_map_multi.smk"
+# include: "rules/merge_unmapped_bam.smk"
+# include: "rules/dedup.smk"
+# include: "rules/extract_ad5.smk"
+# include: "rules/extract_junc.smk"
+# include: "rules/TEtranscripts.smk"
+include: "rules/featureCount.smk"
+# include: "rules/get_bw.smk"
+# include: "rules/diff_exp.smk"

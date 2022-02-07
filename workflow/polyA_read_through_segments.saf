@@ -1,0 +1,6 @@
+GeneID	Chr	Start	End	Strand
+E1A_forward_readthrough	Ad5	1654	1682	+
+E1B_forward_readthrough	Ad5	4092	6029	+
+IVa2_reverse_readthrough	Ad5	510	4037	-
+L5Fiber_forward_readthrough	Ad5	32823	33090	+
+E4_reverse_readthrough	Ad5	31082	32786	-

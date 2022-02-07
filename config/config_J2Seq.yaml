@@ -1,0 +1,21 @@
+samples: sample_table.tsv
+tools: 
+    fastq-dump: /home/dic/public/tools/sratoolkit.2.10.8-centos_linux64/bin/fastq-dump
+    trim_galore: /home/dic/public/miniconda3/bin/trim_galore
+    STAR: /home/dic/public/miniconda3/envs/snakemake/bin/STAR
+    samtools: /home/dic/public/miniconda3/bin/samtools
+genome:
+    annotation: /home/dic/public/genomes/GENCODE/human_ad5/gencode_v35_ad5.gtf
+    TE_anno: /home/dic/public/genomes/GENCODE/human/GRCh38_GENCODE_rmsk_TE.gtf
+    sequence: /home/dic/public/genomes/GENCODE/human_ad5/gencode_v35_ad5.fa
+    fastq_screen_conf: /home/dic/public/genomes/FastQ_Screen_Genomes/fastq_screen.conf
+data_dir:
+    STAR_align: ../results/STAR_align
+    STAR_align_multi: ../results/STAR_align_multi
+    fastq_screen: ../results/fastq_screen_output
+index:
+    STAR_index: /home/dic/public/genomes/GENCODE/human_ad5/STAR_index_gencode_v35_ad5
+diffexp:
+    samples: sample_contrast.tsv
+    contrasts:
+        - e4_vs_wt

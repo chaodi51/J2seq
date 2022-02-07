@@ -1,0 +1,9 @@
+sample	unit	fq1	fq2	strand	phenotype	lib_type
+Ad5input1	rep1	Ad5input1_all.fastq.gz			wt	input
+Ad5input2	rep2	Ad5input2_all.fastq.gz			wt	input
+E4input1	rep1	E4input1_all.fastq.gz			e4	input
+E4input2	rep2	E4input2_all.fastq.gz			e4	input
+J2Ad5-1	rep1	J2Ad5-1_all.fastq.gz			wt	J2-RIP
+J2Ad5-2	rep2	J2Ad5-2_all.fastq.gz			wt	J2-RIP
+J2E4-1	rep1	J2E4-1_all.fastq.gz			e4	J2-RIP
+J2E4-2	rep2	J2E4-2_all.fastq.gz			e4	J2-RIP

@@ -1,0 +1,5 @@
+Ad5	1654	1682	E1A_forward_readthrough	0	+	1654	1682	0	0
+Ad5	4092	6029	E1B_forward_readthrough	0	+	4092	6029	0	0
+Ad5	510	4037	IVa2_reverse_readthrough	0	-	510	4037	0	0
+Ad5	32823	33090	L5Fiber_forward_readthrough	0	+	32823	33090	0	0
+Ad5	31082	32786	E4_reverse_readthrough	0	-	31082	32786	0	0
